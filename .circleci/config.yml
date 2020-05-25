@@ -34,8 +34,7 @@ orbs:
     executors:
       default:
         docker:
-          image: cimg/base:2020.01
-        resource_class: small
+          - image: cimg/base:2020.01
 workflows:
   test:
     jobs:
