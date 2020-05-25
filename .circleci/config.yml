@@ -1,0 +1,44 @@
+version: 2.1
+description: Use ecs-cli commands by orb
+
+orbs:
+  ecs-cli:
+    jobs:
+      init:
+        executor: alpine
+        steps:
+          - tool-install
+    commands:
+      compose-service-up:
+        parameters:
+          docker-compose-yml:
+            type: string
+          ecs-param-yml:
+            type: string
+        steps:
+          - run: ecs-cli compose service up
+      tool-install:
+        description: install AWS ecs-cli
+        steps:
+          - run:
+              name: install tools
+              command: |
+                sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+                sudo chmod +x /usr/local/bin/ecs-cli
+                ecs-cli --version
+      ecs-cli-configure:
+        steps:
+          - run:
+              name: configure
+              command: ecs-cli configure
+    executors:
+      alpine:
+        docker:
+          - environment:
+              TERM: dumb
+            image: cibuilds/base:latest
+        resource_class: small
+workflows:
+  test:
+    jobs:
+      - ecs-cli/init
