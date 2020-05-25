@@ -7,17 +7,10 @@ orbs:
       init:
         executor: default
         steps:
-          - tool-install
+          - install
+          - configure
     commands:
-      compose-service-up:
-        parameters:
-          docker-compose-yml:
-            type: string
-          ecs-param-yml:
-            type: string
-        steps:
-          - run: ecs-cli compose service up
-      tool-install:
+      install:
         description: install AWS ecs-cli
         steps:
           - run:
@@ -26,11 +19,38 @@ orbs:
                 sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
                 sudo chmod +x /usr/local/bin/ecs-cli
                 ecs-cli --version
-      ecs-cli-configure:
+      configure:
+        parameters:
+          aws-access-key-id:
+            default: AWS_ACCESS_KEY_ID
+            description: |
+              AWS access key id for IAM role. Set this to the name of
+              the environment variable you will use to hold this
+              value, i.e. AWS_ACCESS_KEY.
+            type: env_var_name
+          aws-region:
+            default: AWS_DEFAULT_REGION
+            description: |
+              Env var of AWS region to operate in
+              (defaults to AWS_DEFAULT_REGION)
+            type: env_var_name
+          aws-secret-access-key:
+            default: AWS_SECRET_ACCESS_KEY
+            description: |
+              AWS secret key for IAM role. Set this to the name of
+              the environment variable you will use to hold this
+              value, i.e. $AWS_SECRET_ACCESS_KEY.
+            type: env_var_name
         steps:
           - run:
-              name: configure
-              command: ecs-cli configure
+              name: cofigure
+              command: ecs-cli configure --region $AWS_DEFAULT_REGION
+          - run:
+              name: configure profile
+              command: |
+                ecs-cli configure profile --profile-name default \
+                --access-key << parameters.aws-access-key-id >> \
+                --secret-key << parameters.aws-secret-access-key >>
     executors:
       default:
         docker:
