@@ -5,7 +5,7 @@ orbs:
   ecs-cli:
     jobs:
       init:
-        executor: alpine
+        executor: default
         steps:
           - tool-install
     commands:
@@ -32,11 +32,9 @@ orbs:
               name: configure
               command: ecs-cli configure
     executors:
-      alpine:
+      default:
         docker:
-          - environment:
-              TERM: dumb
-            image: cibuilds/base:latest
+          image: cimg/base:2020.01
         resource_class: small
 workflows:
   test:
