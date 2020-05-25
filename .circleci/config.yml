@@ -9,7 +9,6 @@ orbs:
         executor: default
         steps:
           - install
-          - configure
     commands:
       install:
         description: install AWS ecs-cli
@@ -20,38 +19,31 @@ orbs:
                 sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
                 sudo chmod +x /usr/local/bin/ecs-cli
                 ecs-cli --version
-      configure:
+      run-task:
         parameters:
-          aws-access-key-id:
-            default: AWS_ACCESS_KEY_ID
-            description: |
-              AWS access key id for IAM role. Set this to the name of
-              the environment variable you will use to hold this
-              value, i.e. AWS_ACCESS_KEY.
-            type: env_var_name
-          aws-region:
-            default: AWS_DEFAULT_REGION
-            description: |
-              Env var of AWS region to operate in
-              (defaults to AWS_DEFAULT_REGION)
-            type: env_var_name
-          aws-secret-access-key:
-            default: AWS_SECRET_ACCESS_KEY
-            description: |
-              AWS secret key for IAM role. Set this to the name of
-              the environment variable you will use to hold this
-              value, i.e. $AWS_SECRET_ACCESS_KEY.
-            type: env_var_name
+          compose-yml:
+            type: string
+          ecs-params-yml:
+            type: string
+          cluster:
+            type: string
+            description: cluster name
+          launch-type:
+            type: string
+            default: FARGATE
+          force-update:
+            type: boolean
+            default: true
         steps:
           - run:
-              name: cofigure
-              command: ecs-cli configure --cluster test --region ap-northeast-1
-          - run:
-              name: configure profile
+              name:
               command: |
-                ecs-cli configure profile --profile-name default \
-                --access-key << parameters.aws-access-key-id >> \
-                --secret-key << parameters.aws-secret-access-key >>
+                ecs-cli compose --file << parameters.compose-yml >> \
+                --ecs-params << parameters.ecs-params-yml >> \
+                --region $AWS_REGION \
+                --cluster << parameters.cluster >> \
+                up \
+                --launch-type << parameters.launch-type >>
     executors:
       default:
         docker:
