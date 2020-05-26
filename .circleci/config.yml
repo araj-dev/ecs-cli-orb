@@ -127,12 +127,5 @@ workflows:
             branches:
               only: master
           requires:
-            - ecs-cli/init]
-      - ecs-cli/run-service:
-          name: service-staging
-          compose-yml: ecs/migrate/docker-compose.yml
-          ecs-params-yml: ecs/migrate/ecs-params.yml
-          cluster: production-cluster
-          container-name:
-          container-port:
+            - ecs-cli/init
 
