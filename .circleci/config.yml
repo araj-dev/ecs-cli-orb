@@ -9,6 +9,21 @@ orbs:
         executor: default
         steps:
           - install
+      run-task:
+        parameters:
+          compose-yml:
+            type: string
+          ecs-params-yml:
+            type: string
+          cluster:
+            type: string
+            description: cluster name
+        executor: default
+        steps:
+          - run-task:
+              compose-yml: << parameters.compose-yml >>
+              ecs-params-yml: << parameters.ecs-params-yml >>
+              cluster: << parameters.cluster >>
     commands:
       install:
         description: install AWS ecs-cli
@@ -33,7 +48,7 @@ orbs:
             default: FARGATE
           force-update:
             type: boolean
-            default: true
+            default: false
         steps:
           - run:
               name:
@@ -44,11 +59,80 @@ orbs:
                 --cluster << parameters.cluster >> \
                 up \
                 --launch-type << parameters.launch-type >>
+      run-service:
+        parameters:
+          compose-yml:
+            type: string
+          ecs-params-yml:
+            type: string
+          cluster:
+            type: env_var_name
+            description: cluster name
+            default: CLUSTER_NAME
+          launch-type:
+            type: string
+            default: FARGATE
+          force-update:
+            type: boolean
+            default: false
+          deployment-max-percent:
+            type: integer
+            default: 200
+          deployment-min-healthy-percent:
+            type: integer
+            default: 100
+          target-group-arn:
+            type: string
+          container-name:
+            type: string
+          container-port:
+            type: integer
+            default: 80
+        steps:
+          - run:
+              name:
+              command: |
+                ecs-cli compose
+                --file << parameters.compose-yml >> \
+                --ecs-params << parameters.ecs-params-yml >> \
+                --region $AWS_REGION \
+                --cluster << parameters.cluster >> \
+                service up \
+                --deployment-max-percent << parameters.deployment-max-percent >> \
+                --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
     executors:
       default:
         docker:
           - image: cimg/base:2020.01
 workflows:
-  test:
+  deploy:
     jobs:
       - ecs-cli/init
+      - ecs-cli/run-task:
+          name: migrate-staging
+          compose-yml: ecs/migrate/docker-compose.yml
+          ecs-params-yml: ecs/migrate/ecs-params.yml
+          cluster: staging-cluster
+          filters:
+            branches:
+              only: develop
+          requires:
+            - ecs-cli/init
+      - ecs-cli/run-task:
+          name: migrate-production
+          compose-yml: ecs/migrate/docker-compose.yml
+          ecs-params-yml: ecs/migrate/ecs-params.yml
+          cluster: production-cluster
+          filters:
+            branches:
+              only: master
+          requires:
+            - ecs-cli/init]
+      - ecs-cli/run-service:
+          name: service-staging
+          compose-yml: ecs/migrate/docker-compose.yml
+          ecs-params-yml: ecs/migrate/ecs-params.yml
+          cluster: production-cluster
+          container-name:
+          container-port:
+

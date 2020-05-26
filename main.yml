@@ -1,0 +1,77 @@
+version: 2.1
+
+description: Use ecs-cli commands by orb
+
+commands:
+  install:
+    description: install AWS ecs-cli
+    steps:
+      - run:
+          name: install tools
+          command: |
+            sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+            sudo chmod +x /usr/local/bin/ecs-cli
+            ecs-cli --version
+  run-task:
+    parameters:
+      compose-yml:
+        type: string
+      ecs-params-yml:
+        type: string
+      cluster:
+        type: string
+        description: cluster name
+      launch-type:
+        type: string
+        default: FARGATE
+      force-update:
+        type: boolean
+        default: false
+    steps:
+      - run:
+          name:
+          command: |
+            ecs-cli compose --file << parameters.compose-yml >> \
+            --ecs-params << parameters.ecs-params-yml >> \
+            --region $AWS_REGION \
+            --cluster << parameters.cluster >> \
+            up \
+            --launch-type << parameters.launch-type >>
+  run-service:
+    parameters:
+      compose-yml:
+        type: string
+      ecs-params-yml:
+        type: string
+      cluster:
+        type: env_var_name
+        description: cluster name
+        default: CLUSTER_NAME
+      launch-type:
+        type: string
+        default: FARGATE
+      force-update:
+        type: boolean
+        default: false
+      deployment-max-percent:
+        type: integer
+        default: 200
+      deployment-min-healthy-percent:
+        type: integer
+        default: 100
+    steps:
+      - run:
+          name:
+          command: |
+            ecs-cli compose
+            --file << parameters.compose-yml >> \
+            --ecs-params << parameters.ecs-params-yml >> \
+            --region $AWS_REGION \
+            --cluster << parameters.cluster >> \
+            service up \
+            --deployment-max-percent << parameters.deployment-max-percent >> \
+            --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
+executors:
+  default:
+    docker:
+      - image: cimg/base:2020.01
