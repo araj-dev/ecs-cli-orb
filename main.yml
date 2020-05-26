@@ -67,8 +67,7 @@ commands:
       - run:
           name:
           command: |
-            [<< parameters.force-update >>]&& set -- "$@" --force-update
-            ecs-cli compose
+            ecs-cli compose \
             --file << parameters.compose-yml >> \
             --ecs-params << parameters.ecs-params-yml >> \
             --region $AWS_REGION \
@@ -76,7 +75,8 @@ commands:
             service up \
             --deployment-max-percent << parameters.deployment-max-percent >> \
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
-            << parameters.optional-parameters >><<parameters.optional-parameter>><</parameters.optional-parameter>>
+            << parameters.optional-parameters >><<parameters.optional-parameter>><</parameters.optional-parameter>> \
+            <<# parameters.force-update >>--force-update<</ parameters.force-update >>
             $@
 executors:
   default:
