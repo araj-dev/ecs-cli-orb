@@ -75,8 +75,8 @@ commands:
             service up \
             --deployment-max-percent << parameters.deployment-max-percent >> \
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
-            <<# parameters.optional-parameters >><< parameters.optional-parameter >><</ parameters.optional-parameter >> \
-            <<# parameters.force-update >>--force-update<</ parameters.force-update >>
+            <<# parameters.force-update >>--force-update<</ parameters.force-update >> \
+            <<# parameters.optional-parameters >><< parameters.optional-parameter >><</ parameters.optional-parameter >>
 executors:
   default:
     docker:
