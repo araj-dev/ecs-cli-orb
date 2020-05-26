@@ -1,6 +1,8 @@
 version: 2.1
 
-description: Use ecs-cli commands by orb
+description: |
+  Use ecs-cli commands by orb
+  Source https://github.com/rascate/ecs-cli-orb
 
 commands:
   install:
@@ -70,7 +72,7 @@ commands:
             --cluster << parameters.cluster >> \
             service up \
             --deployment-max-percent << parameters.deployment-max-percent >> \
-            --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
+            --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >>
 executors:
   default:
     docker:
