@@ -4,10 +4,11 @@ description: Use ecs-cli commands by orb
 
 orbs:
   orb-tools: circleci/orb-tools@9.1.0
+  cli: circleci/circleci-cli@0.1.8
 
 jobs:
   validate:
-    executor: orb-tools/ubuntu
+    executor: cli/default
     steps:
       - orb-tools/validate
 
