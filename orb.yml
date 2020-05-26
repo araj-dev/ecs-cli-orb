@@ -60,9 +60,6 @@ commands:
       deployment-min-healthy-percent:
         type: integer
         default: 100
-      optional-parameters:
-        type: string
-        default: ""
     steps:
       - run:
           name:
@@ -75,8 +72,7 @@ commands:
             service up \
             --deployment-max-percent << parameters.deployment-max-percent >> \
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
-            <<# parameters.force-update >>--force-update<</ parameters.force-update >> \
-            <<# parameters.optional-parameters >> << parameters.optional-parameter >> <</ parameters.optional-parameter >>
+            <<# parameters.force-update >>--force-update<</ parameters.force-update >>
 executors:
   default:
     docker:
