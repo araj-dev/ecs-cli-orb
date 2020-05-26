@@ -46,9 +46,8 @@ commands:
       ecs-params-yml:
         type: string
       cluster:
-        type: env_var_name
+        type: string
         description: cluster name
-        default: CLUSTER_NAME
       launch-type:
         type: string
         default: FARGATE
@@ -65,6 +64,7 @@ commands:
       - run:
           name:
           command: |
+            [<< parameters.force-update >>]&& set -- "$@" --force-update
             ecs-cli compose
             --file << parameters.compose-yml >> \
             --ecs-params << parameters.ecs-params-yml >> \
@@ -72,7 +72,8 @@ commands:
             --cluster << parameters.cluster >> \
             service up \
             --deployment-max-percent << parameters.deployment-max-percent >> \
-            --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >>
+            --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
+            $@
 executors:
   default:
     docker:
