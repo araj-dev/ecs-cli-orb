@@ -2,40 +2,6 @@ version: 2.1
 
 description: Use ecs-cli commands by orb
 
-examples:
-  run-task:
-    description: run migration task once
-    usage:
-      version: 2.1
-      orbs:
-        ecs-cli: araj/ecs-cli@1.0.6
-      jobs:
-        build:
-          machine: true
-          steps:
-            - ecs-cli/install
-            - checkout
-            - ecs-cli/run-task:
-                cluster: 'some-cluster-name'
-                compose-yml: path/to/docker-compose.yml
-                ecs-params-yml: path/to/ecs-params.yml
-  run-service:
-    description: run service
-    usage:
-      version: 2.1
-      orbs:
-        ecs-cli: araj/ecs-cli@1.0.6
-      jobs:
-        build:
-          machine: true
-          steps:
-            - ecs-cli/install
-            - checkout
-            - ecs-cli/run-service:
-                cluster: 'some-cluster-name'
-                compose-yml: path/to/docker-compose.yml
-                ecs-params-yml: path/to/ecs-params.yml
-
 orbs:
   orb-tools: circleci/orb-tools@9.1.0
   cli: circleci/circleci-cli@0.1.8
