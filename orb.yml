@@ -62,7 +62,7 @@ commands:
         default: 100
       optional-parameters:
         type: string
-        default ""
+        default: ""
     steps:
       - run:
           name:
