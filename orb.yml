@@ -75,7 +75,7 @@ commands:
             --deployment-max-percent << parameters.deployment-max-percent >> \
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
             <<# parameters.force-update >>--force-update<</ parameters.force-update >> \
-            <<# parameters.optional-parameters >><< parameters.optional-parameter >><</ parameters.optional-parameter >>
+            <<# parameters.optional-parameters >><< parameters.optional-parameters >><</ parameters.optional-parameters >>
 executors:
   default:
     docker:
