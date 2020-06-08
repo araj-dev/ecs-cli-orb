@@ -50,7 +50,7 @@ examples:
             - ecs-cli/install
             - checkout
             - ecs-cli/run-push:
-                repo-url: 'foo.dkr.ecr.ap-northeast-1.amazonaws.com/bar'
+                repo-url: foo.dkr.ecr.ap-northeast-1.amazonaws.com/bar
                 version: latest
 
 commands:
