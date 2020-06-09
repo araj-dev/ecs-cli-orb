@@ -130,7 +130,7 @@ commands:
     parameters:
       repo-url:
         type: string
-      version:
+      tag:
         type: string
         default: latest
       registry-id:
@@ -163,7 +163,7 @@ commands:
             --ecs-profile << parameters.ecs-profile >> \
             --aws-profile << parameters.aws-profile >> \
             --cluster << parameters.cluster >> \
-            << parameters.repo-url >>:<< parameters.version >>
+            << parameters.repo-url >>:<< parameters.tag >>
 
 executors:
   default:
