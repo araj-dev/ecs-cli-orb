@@ -107,6 +107,7 @@ commands:
             --region $AWS_REGION \
             --cluster << parameters.cluster >> \
             service up \
+            --launch-type << parameters.launch-type >> \
             --deployment-max-percent << parameters.deployment-max-percent >> \
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
             <<# parameters.force-update >>--force-update<</ parameters.force-update >> \
