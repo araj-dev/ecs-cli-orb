@@ -37,6 +37,21 @@ examples:
                 cluster: 'some-cluster-name'
                 compose-yml: path/to/docker-compose.yml
                 ecs-params-yml: path/to/ecs-params.yml
+  run-push:
+    description: run ecs-cli push
+    usage:
+      version: 2.1
+      orbs:
+        ecs-cli: araj/ecs-cli@1.0.6
+      jobs:
+        build:
+          machine: true
+          steps:
+            - ecs-cli/install
+            - checkout
+            - ecs-cli/run-push:
+                repo-url: foo.dkr.ecr.ap-northeast-1.amazonaws.com/bar
+                version: latest
 
 commands:
   install:
@@ -112,8 +127,46 @@ commands:
             --deployment-min-healthy-percent << parameters.deployment-min-healthy-percent >> \
             <<# parameters.force-update >>--force-update<</ parameters.force-update >> \
             <<# parameters.optional-parameters >><< parameters.optional-parameters >><</ parameters.optional-parameters >>
+  run-push:
+    parameters:
+      repo-url:
+        type: string
+      tag:
+        type: string
+        default: latest
+      registry-id:
+        type: string
+        default: ""
+      tags:
+        type: string
+        default: ""
+      cluster-config:
+        type: string
+        default: ""
+      ecs-profile:
+        type: string
+        default: ""
+      aws-profile:
+        type: string
+        default: ""
+      cluster:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: "ecs-cli push"
+          command: |
+            ecs-cli push \
+            --registry-id << parameters.registry-id >> \
+            --tags << parameters.tags >> \
+            --region $AWS_REGION \
+            --cluster-config << parameters.cluster-config >> \
+            --ecs-profile << parameters.ecs-profile >> \
+            --aws-profile << parameters.aws-profile >> \
+            --cluster << parameters.cluster >> \
+            << parameters.repo-url >>:<< parameters.tag >>
+
 executors:
   default:
     docker:
       - image: cimg/base:2020.01
-
